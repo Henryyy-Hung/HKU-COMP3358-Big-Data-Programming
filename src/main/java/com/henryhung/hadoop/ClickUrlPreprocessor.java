@@ -26,6 +26,7 @@ public class ClickUrlPreprocessor {
                 String formattedTime = String.format("%02d:%02d", Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1]));
                 String clickUrl = parts[2];
                 String domain = clickUrl.contains("/") ? clickUrl.split("/")[0] : clickUrl; // Get domain, stripping after "/"
+                domain = domain.trim().replaceAll("^\"|\"$", "");
                 outputKey.set(formattedTime);
                 outputValue.set(domain);
                 context.write(outputKey, outputValue);
