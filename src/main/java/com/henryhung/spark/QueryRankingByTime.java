@@ -14,7 +14,12 @@ public class QueryRankingByTime {
 
         JavaRDD<String> data = sc.textFile("assets/processed/search_data.sample/part-r-00000");
         JavaPairRDD<String, Integer> queryCounts = data
-                .mapToPair(line -> new Tuple2<>(line.split("\t")[0], 1))
+                .mapToPair(line -> {
+                    String[] parts = line.split("\t");
+                    String time = parts[0];
+                    Integer count = Integer.parseInt(parts[2]);
+                    return new Tuple2<>(time, count);
+                })
                 .reduceByKey(Integer::sum);
 
         JavaPairRDD<Integer, String> swappedQueryCounts = queryCounts.mapToPair(Tuple2::swap);

@@ -7,6 +7,8 @@ import org.apache.spark.SparkConf;
 import scala.Tuple2;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TokenRanking {
 
@@ -16,8 +18,16 @@ public class TokenRanking {
 
         JavaRDD<String> data = sc.textFile("assets/processed/search_data.sample/part-r-00000");
         JavaPairRDD<String, Integer> tokens = data
-                .flatMap(line -> Arrays.asList(line.split("\t")[1].split("\\.")).iterator())
-                .mapToPair(token -> new Tuple2<>(token, 1))
+                .flatMapToPair(line -> {
+                    String[] parts = line.split("\t");
+                    String domain = parts[1];
+                    Integer count = Integer.parseInt(parts[2]);
+                    List<String> tokenList = Arrays.asList(domain.split("\\."));
+                    return tokenList.stream()
+                            .map(token -> new Tuple2<>(token, count))
+                            .collect(Collectors.toList())
+                            .iterator();
+                })
                 .reduceByKey(Integer::sum);
 
         JavaPairRDD<Integer, String> swappedTokenCounts = tokens.mapToPair(Tuple2::swap);
