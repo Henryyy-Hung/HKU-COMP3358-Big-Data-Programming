@@ -52,7 +52,7 @@ public class ClickUrlPreprocessor {
         Job job = Job.getInstance(conf, "Click URL Preprocessor");
         job.setJarByClass(ClickUrlPreprocessor.class);
         job.setMapperClass(UrlMapper.class);
-        job.setCombinerClass(UrlReducer.class); // Adding Combiner
+        job.setCombinerClass(UrlReducer.class);
         job.setReducerClass(UrlReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
